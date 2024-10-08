@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVotingSystemAPI", "OnlineVotingSystemAPI\OnlineVotingSystemAPI.csproj", "{93022E24-2411-4977-9D05-B290BEE9F783}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVotingSystemMVC", "OnlineVotingSystemMVC\OnlineVotingSystemMVC.csproj", "{2E5CF735-F038-4CB1-8768-4864EAA62ED3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93022E24-2411-4977-9D05-B290BEE9F783}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93022E24-2411-4977-9D05-B290BEE9F783}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93022E24-2411-4977-9D05-B290BEE9F783}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93022E24-2411-4977-9D05-B290BEE9F783}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E5CF735-F038-4CB1-8768-4864EAA62ED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E5CF735-F038-4CB1-8768-4864EAA62ED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E5CF735-F038-4CB1-8768-4864EAA62ED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E5CF735-F038-4CB1-8768-4864EAA62ED3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E657F46E-C386-4BCB-978F-362108E08428}
+	EndGlobalSection
+EndGlobal
