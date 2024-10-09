@@ -3,6 +3,7 @@ using OnlineVotingSystemAPI.Data;
 using OnlineVotingSystemAPI.DTOs;
 using OnlineVotingSystemAPI.Models;
 using OnlineVotingSystemAPI.Repositories.Interfaces;
+using System.Diagnostics;
 
 namespace OnlineVotingSystemAPI.Repositories.Implementations
 {
@@ -47,17 +48,6 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             return role;
         }
 
-        //public async Task<User> GetUserByEmailAsync(string email)
-        //{
-        //    var user = await _dbContext.Users.Include(u => u.Roles).SingleOrDefaultAsync(u => u.Email == email);
-
-        //    if (user == null)
-        //    {
-        //        throw new Exception("User not found.");
-        //    }
-        //    return user;
-        //}
-
         public async Task<UserResponseDTO?> GetUserByEmailAsync(string email)
         {
             var user = await _dbContext.Users
@@ -80,5 +70,16 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             };
         }
 
+        public async Task<User> GetUserWithRolesByEmailAsync(string email)
+        {
+            var user =  await _dbContext.Users.Include(u => u.Roles).SingleOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                throw new Exception($"User with email '{email}' not found.");
+            }
+
+            return user;
+        }
     }
 }

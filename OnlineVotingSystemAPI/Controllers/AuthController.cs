@@ -22,6 +22,7 @@ namespace OnlineVotingSystemAPI.Controllers
         }
 
         //creating Register endpoint
+        // POST: api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO registrationDTO)
         {
@@ -48,6 +49,43 @@ namespace OnlineVotingSystemAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        //creating Login Endpoint
+        // POST: api/auth/login
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login(LoginDTO loginDTO)
+        {
+            //check if login details are null
+            if (loginDTO == null)
+            {
+                return BadRequest("Login details cannot be null");
+            }
+
+            try
+            {
+                //Call Service to login
+                var token = await _authService.LoginUserAsync(loginDTO);
+
+                //if login is successful, show message
+                return Ok(new
+                {
+                    // Success message
+                    Message = "Login successful.",
+
+                    // Return the token
+                    Token = token
+                });
+            }
+            catch(UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid email or password.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

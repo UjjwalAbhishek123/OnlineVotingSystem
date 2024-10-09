@@ -100,5 +100,16 @@ namespace OnlineVotingSystemAPI.Repositories.Impementations
             return await _dbContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<User> GetUserWithRolesByEmailAsync(string email)
+        {
+            var user = await _dbContext.Users.Include(u => u.Roles).SingleOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                throw new Exception($"User with email '{email}' not found.");
+            }
+
+            return user;
+        }
     }
 }

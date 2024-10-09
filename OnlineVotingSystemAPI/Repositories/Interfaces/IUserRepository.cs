@@ -12,5 +12,6 @@ namespace OnlineVotingSystemAPI.Repositories.Interfaces
         Task<User> CreateUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
+        Task<User> GetUserWithRolesByEmailAsync(string email);
     }
 }

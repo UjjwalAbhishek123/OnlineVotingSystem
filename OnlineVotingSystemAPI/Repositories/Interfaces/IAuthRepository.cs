@@ -8,5 +8,9 @@ namespace OnlineVotingSystemAPI.Repositories.Interfaces
         Task<UserResponseDTO> GetUserByEmailAsync(string email);
         Task<User> CreateUserAsync(User user);
         Task<Role> GetRoleByNameAsync(string roleName);
+
+        //Adding new Method to get user with roles by Email
+        //For login
+        Task<User> GetUserWithRolesByEmailAsync(string email);
     }
 }

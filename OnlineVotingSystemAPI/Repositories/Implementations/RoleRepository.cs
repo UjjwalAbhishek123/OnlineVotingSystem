@@ -6,7 +6,6 @@ using OnlineVotingSystemAPI.Repositories.Interfaces;
 namespace OnlineVotingSystemAPI.Repositories.Implementations
 {
     // Role repository implementation
-
     public class RoleRepository : IRoleRepository
     {
         private readonly ApplicationDbContext _dbContext;
