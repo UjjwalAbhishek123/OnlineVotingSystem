@@ -50,7 +50,11 @@ namespace OnlineVotingSystemAPI.Services.Implementations
                 Email = registrationDTO.Email,
 
                 //Hashing pasword
-                Password = PasswordHelper.HashPassword(registrationDTO.Password)
+                Password = PasswordHelper.HashPassword(registrationDTO.Password),
+
+                FirstName = registrationDTO.FirstName,
+
+                LastName = registrationDTO.LastName
             };
 
             if (string.IsNullOrEmpty(registrationDTO.Role))
@@ -81,6 +85,8 @@ namespace OnlineVotingSystemAPI.Services.Implementations
                 // Add properties you want to expose in the response
                 Id = createdUser.Id,
                 Email = createdUser.Email,
+                FirstName = createdUser.FirstName, // Add FirstName to response
+                LastName = createdUser.LastName,   // Add LastName to response
                 Roles = createdUser.Roles.Select(r => new RoleDTO { Name = r.Name }).ToList() //map the roles
             };
         }

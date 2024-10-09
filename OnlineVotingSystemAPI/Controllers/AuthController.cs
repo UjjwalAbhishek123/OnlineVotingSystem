@@ -34,10 +34,16 @@ namespace OnlineVotingSystemAPI.Controllers
             {
                 var userDto = await _authService.RegisterUserAsync(registrationDTO);
 
-                // Serialize the response using Newtonsoft.Json if needed
-                var jsonResponse = JsonConvert.SerializeObject(userDto);
+                //// Serialize the response using Newtonsoft.Json if needed
+                //var jsonResponse = JsonConvert.SerializeObject(userDto);
 
-                return Ok(jsonResponse);
+                //return Ok(jsonResponse);
+
+                return Ok(new
+                {
+                    message = "Successfully registered.",
+                    user = userDto
+                });
             }
             catch (Exception ex)
             {
