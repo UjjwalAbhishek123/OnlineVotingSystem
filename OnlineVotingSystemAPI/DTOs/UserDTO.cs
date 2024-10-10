@@ -13,5 +13,11 @@ namespace OnlineVotingSystemAPI.DTOs
         [Required]
         [StringLength(255, ErrorMessage = "Password length can't be more than 255.")]
         public string Password { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public List<string> Roles { get; set; } // List of role names
     }
 }
