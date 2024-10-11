@@ -17,6 +17,8 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
     public class AdminRepository : IAdminRepository
     {
         private readonly ApplicationDbContext _dbContext;
+
+        //creating private field for Distributed Cache
         private readonly IDistributedCache _cache;
 
         public AdminRepository(ApplicationDbContext dbContext, IDistributedCache cache)
@@ -28,14 +30,21 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var cacheKey = "Get_All_Users";
+
+            //Get data from cache
             var cachedData = await _cache.GetAsync(cacheKey);
 
             if (cachedData != null)
             {
+                //if data is found in cache, ENCODE and DESERIALIZE cached data
+                //Encoding cache data
                 var cachedDataString = Encoding.UTF8.GetString(cachedData);
+
+                //deserializing and returning Cache data
                 return JsonSerializer.Deserialize<IEnumerable<UserDTO>>(cachedDataString) ?? new List<UserDTO>();
             }
 
+            //If not found in cache, fetch from DATABASE
             var users = await _dbContext.Users
                 .Include(u => u.Roles) // Eager load roles
                 .ToListAsync();
@@ -50,11 +59,15 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             }).ToList();
 
             // Caching the data
+            //Serializing data and Encoding it
             var newDataToCache = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(userDtos));
+
+            //setting cache options
             var options = new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(DateTime.Now.AddMinutes(5))
                 .SetSlidingExpiration(TimeSpan.FromMinutes(2));
 
+            //add Data in Cache
             await _cache.SetAsync(cacheKey, newDataToCache, options);
 
             return userDtos;
@@ -63,11 +76,16 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var cacheKey = $"User_{id}";
+
+            //Get data from cache
             var cachedData = await _cache.GetAsync(cacheKey);
 
             if (cachedData != null)
             {
+                //if data found in cache, Encode
                 var cachedDataString = Encoding.UTF8.GetString(cachedData);
+
+                //then, Desrialize cached data
                 return JsonSerializer.Deserialize<UserDTO>(cachedDataString) ?? throw new KeyNotFoundException($"User with id {id} not found.");
             }
 
@@ -93,11 +111,15 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             };
 
             // Caching the data
+            //Serializing data and Encoding data
             var newDataToCache = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(userDto));
+
+            //setting cache options
             var options = new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(DateTime.Now.AddHours(24))
                 .SetSlidingExpiration(TimeSpan.FromHours(12));
 
+            //add data in cache
             await _cache.SetAsync(cacheKey, newDataToCache, options);
 
             return userDto;
