@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text;
+using System.Text.Json;
 using OnlineVotingSystemAPI.Data;
 using OnlineVotingSystemAPI.DTOs;
 using OnlineVotingSystemAPI.Models;
@@ -14,30 +17,60 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
     public class AdminRepository : IAdminRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IDistributedCache _cache;
 
-        public AdminRepository(ApplicationDbContext dbContext)
+        public AdminRepository(ApplicationDbContext dbContext, IDistributedCache cache)
         {
             _dbContext = dbContext;
+            _cache = cache;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
+            var cacheKey = "Get_All_Users";
+            var cachedData = await _cache.GetAsync(cacheKey);
+
+            if (cachedData != null)
+            {
+                var cachedDataString = Encoding.UTF8.GetString(cachedData);
+                return JsonSerializer.Deserialize<IEnumerable<UserDTO>>(cachedDataString) ?? new List<UserDTO>();
+            }
+
             var users = await _dbContext.Users
                 .Include(u => u.Roles) // Eager load roles
                 .ToListAsync();
 
-            return users.Select(u => new UserDTO
+            var userDtos = users.Select(u => new UserDTO
             {
                 Email = u.Email,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Password = u.Password,
-                Roles = u.Roles.Select(r => r.Name).ToList() // Assuming Role has a Name property
+                Roles = u.Roles.Select(r => r.Name).ToList()
             }).ToList();
+
+            // Caching the data
+            var newDataToCache = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(userDtos));
+            var options = new DistributedCacheEntryOptions()
+                .SetAbsoluteExpiration(DateTime.Now.AddMinutes(5))
+                .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+
+            await _cache.SetAsync(cacheKey, newDataToCache, options);
+
+            return userDtos;
         }
 
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
+            var cacheKey = $"User_{id}";
+            var cachedData = await _cache.GetAsync(cacheKey);
+
+            if (cachedData != null)
+            {
+                var cachedDataString = Encoding.UTF8.GetString(cachedData);
+                return JsonSerializer.Deserialize<UserDTO>(cachedDataString) ?? throw new KeyNotFoundException($"User with id {id} not found.");
+            }
+
             // Finding user by specific id and including roles
             var user = await _dbContext.Users
                 .Include(u => u.Roles)
@@ -50,14 +83,24 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
                 throw new KeyNotFoundException($"User with id {id} not Found.");
             }
 
-            return new UserDTO
+            var userDto = new UserDTO
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Password = user.Password,
-                Roles = user.Roles.Select(r => r.Name).ToList() // Assuming Role has a Name property
+                Roles = user.Roles.Select(r => r.Name).ToList()
             };
+
+            // Caching the data
+            var newDataToCache = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(userDto));
+            var options = new DistributedCacheEntryOptions()
+                .SetAbsoluteExpiration(DateTime.Now.AddHours(24))
+                .SetSlidingExpiration(TimeSpan.FromHours(12));
+
+            await _cache.SetAsync(cacheKey, newDataToCache, options);
+
+            return userDto;
         }
 
         public async Task<User> CreateUserAsync(User user)
@@ -73,6 +116,9 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             //add user to database
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
+
+            // Clear user cache on creation
+            await _cache.RemoveAsync("Get_All_Users");
 
             return user;
         }
@@ -104,7 +150,13 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
 
             //check if the number of affected rows is greater than zero.
             //If changes were successfully saved, it will return true; otherwise, it returns false
-            return await _dbContext.SaveChangesAsync() > 0;
+            bool updated = await _dbContext.SaveChangesAsync() > 0;
+
+            // Clear user cache on update
+            await _cache.RemoveAsync($"User_{user.Id}");
+            await _cache.RemoveAsync("Get_All_Users");
+
+            return updated;
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -124,7 +176,13 @@ namespace OnlineVotingSystemAPI.Repositories.Implementations
             //save the changes to the database asynchronously.
             //It returns true if the number of affected rows(deleted users) is greater than zero, indicating a successful deletion.
             //If no rows were affected, it returns false
-            return await _dbContext.SaveChangesAsync() > 0;
+            bool deleted = await _dbContext.SaveChangesAsync() > 0;
+
+            // Clear user cache on deletion
+            await _cache.RemoveAsync($"User_{id}");
+            await _cache.RemoveAsync("Get_All_Users");
+
+            return deleted;
         }
 
         public async Task<Role> GetRoleByNameAsync(string roleName)
