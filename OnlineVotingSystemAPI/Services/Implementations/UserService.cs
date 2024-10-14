@@ -37,7 +37,6 @@ namespace OnlineVotingSystemAPI.Services.Implementations
             return await _userRepository.DeleteUserAsync(id);
         }
 
-
         //public async Task<User> GetUserByEmailAsync(string email)
         //{
         //    var user = await _userRepository.GetUserByEmailAsync(email);
@@ -109,5 +108,11 @@ namespace OnlineVotingSystemAPI.Services.Implementations
 
             return await _userRepository.UpdateUserAsync(existingUser);
         }
+
+        public async Task<List<CandidateDTO>> GetAllCandidateAsync()
+        {
+            return await _userRepository.GetAllCandidateAsync();
+        }
+
     }
 }

@@ -22,5 +22,25 @@ namespace OnlineVotingSystemAPI.Services.Interfaces
 
         // Only fetching roles
         Task<Role> GetRoleByNameAsync(string roleName);
+
+        //Admin's own functionality
+        Task<AdminDTO?> GetAdminProfileAsync(int adminId);
+        Task<Admin?> GetAdminByEmailAsync(string email);
+        //Task<bool> UpdateAdminProfileAsync(Admin admin);
+        //Task<bool> ChangeAdminPasswordAsync(int adminId, ChangePasswordDTO changePasswordDTO);
+        Task<Admin?> CreateAdminAsync(Admin admin, List<string> roleNames);
+
+        // Voting Event Methods
+        Task<VotingEvent> CreateVotingEventAsync(VotingEvent votingEvent);
+        Task<VotingEvent> GetVotingEventByIdAsync(int id);
+        Task<bool> UpdateVotingEventAsync(VotingEvent votingEvent);
+        Task<bool> DeleteVotingEventAsync(int id);
+
+        //Candidates related Functionality
+        Task<IEnumerable<CandidateDTO>> GetAllCandidatesAsync(int votingEventID);
+        Task<CandidateDTO> GetCandidateByIdAsync(int candidateId);
+        Task<CandidateDTO> CreateCandidateAsync(CandidateDTO candidateDTO);
+        Task<bool> UpdateCandidateAsync(CandidateDTO candidateDTO);
+        Task<bool> DeleteCandidateAsync(int candidateId);
     }
 }

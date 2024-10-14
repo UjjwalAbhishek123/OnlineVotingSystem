@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OnlineVotingSystemAPI.Services.Interfaces;
 
 namespace OnlineVotingSystemAPI.Controllers
 {
@@ -13,11 +14,26 @@ namespace OnlineVotingSystemAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // Sample endpoint to check if user access works
-        [HttpGet("test")]
-        public IActionResult TestUserEndpoint()
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            return Ok("User endpoint is working!");
+            _userService = userService;   
+        }
+
+        // Sample endpoint to check if user access works
+        [HttpGet("get-candidates")]
+        public async Task<IActionResult> GetCandidates()
+        {
+            try
+            {
+                var candidates = await _userService.GetAllCandidateAsync();
+                return Ok(candidates);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // Sample endpoint for getting user details

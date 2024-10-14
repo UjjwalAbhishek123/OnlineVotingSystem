@@ -1,4 +1,5 @@
-﻿using OnlineVotingSystemAPI.DTOs;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using OnlineVotingSystemAPI.DTOs;
 using OnlineVotingSystemAPI.Models;
 
 namespace OnlineVotingSystemAPI.Services.Interfaces
@@ -12,4 +13,5 @@ namespace OnlineVotingSystemAPI.Services.Interfaces
         //type is string because it will generate JWt used for authentication
         Task<string> LoginUserAsync(LoginDTO loginDTO);
     }
+
 }

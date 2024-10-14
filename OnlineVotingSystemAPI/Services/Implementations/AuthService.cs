@@ -171,5 +171,6 @@ namespace OnlineVotingSystemAPI.Services.Implementations
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

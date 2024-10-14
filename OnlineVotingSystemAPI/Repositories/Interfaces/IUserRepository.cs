@@ -1,4 +1,5 @@
-﻿using OnlineVotingSystemAPI.Models;
+﻿using OnlineVotingSystemAPI.DTOs;
+using OnlineVotingSystemAPI.Models;
 
 namespace OnlineVotingSystemAPI.Repositories.Interfaces
 {
@@ -13,5 +14,8 @@ namespace OnlineVotingSystemAPI.Repositories.Interfaces
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
         Task<User> GetUserWithRolesByEmailAsync(string email);
+
+        //user can see only candidates list to vote
+        Task<List<CandidateDTO>> GetAllCandidateAsync();
     }
 }

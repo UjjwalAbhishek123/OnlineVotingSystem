@@ -16,5 +16,8 @@ namespace OnlineVotingSystemAPI.Models
 
         //Navigational property for user having roles
         public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+        // Navigational property for admins having this role
+        public virtual ICollection<AdminRole> AdminRoles { get; set; } = new List<AdminRole>();
     }
 }

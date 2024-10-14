@@ -12,5 +12,8 @@ namespace OnlineVotingSystemAPI.Services.Interfaces
         Task<User> GetUserByIdAsync(int id);
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
+
+        //user can see only candidates list to vote
+        Task<List<CandidateDTO>> GetAllCandidateAsync();
     }
 }

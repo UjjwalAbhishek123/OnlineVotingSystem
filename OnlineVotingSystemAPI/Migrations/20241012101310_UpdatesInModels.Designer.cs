@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineVotingSystemAPI.Data;
 
@@ -11,9 +12,11 @@ using OnlineVotingSystemAPI.Data;
 namespace OnlineVotingSystemAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241012101310_UpdatesInModels")]
+    partial class UpdatesInModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,11 +64,11 @@ namespace OnlineVotingSystemAPI.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 10, 14, 6, 50, 39, 393, DateTimeKind.Utc).AddTicks(2917),
+                            CreatedAt = new DateTime(2024, 10, 12, 10, 13, 8, 408, DateTimeKind.Utc).AddTicks(1170),
                             Email = "admin@example.com",
                             FirstName = "Admin",
                             LastName = "User",
-                            Password = "vh82WhmTD/Db0OSj8KysR/qqkQyWX8IcNxT0fbm/LGQvVXe8p28XUrD4POMdu+BKGdPuvosS129IIFGRY6e94Q==:oWMdvhn0r89hi6qfoNkhSiREbMrE5ZU0Hu2EesQgRCI="
+                            Password = "WKg/IJptaJ0EZbq1PNm64d722zKFES6i2NyuemYNUN40vDAPaS51TlyjFzSJV7L4HkMZOBHbtHTsTY7HBDaLaw==:+NtkV9OWLtboKLiI/yVHvadETWpeRwQOP2Fa6DnCN0I="
                         });
                 });
 
@@ -82,32 +85,6 @@ namespace OnlineVotingSystemAPI.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AdminRoles");
-                });
-
-            modelBuilder.Entity("OnlineVotingSystemAPI.Models.Candidate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Party")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VotingEventId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VotingEventId");
-
-                    b.ToTable("Candidates");
                 });
 
             modelBuilder.Entity("OnlineVotingSystemAPI.Models.Role", b =>
@@ -171,36 +148,6 @@ namespace OnlineVotingSystemAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "admin@example.com",
-                            FirstName = "Admin",
-                            LastName = "User",
-                            Password = "ht4Bk1j4pLA7f63/r/LjZ9zWcEZF2PupF0Kn2Ax/HkUxPquzIsR+MGV4WEUzDNNCao6mKtK7Tc3qdb7PPxq+DQ==:Krmd+ra9yAdAcTtD6FZ+QayX5GQE6AmE7F+7KiylpKA="
-                        });
-                });
-
-            modelBuilder.Entity("OnlineVotingSystemAPI.Models.VotingEvent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("VotingEvents");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -237,17 +184,6 @@ namespace OnlineVotingSystemAPI.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("OnlineVotingSystemAPI.Models.Candidate", b =>
-                {
-                    b.HasOne("OnlineVotingSystemAPI.Models.VotingEvent", "VotingEvent")
-                        .WithMany("Candidates")
-                        .HasForeignKey("VotingEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VotingEvent");
-                });
-
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("OnlineVotingSystemAPI.Models.Role", null)
@@ -271,11 +207,6 @@ namespace OnlineVotingSystemAPI.Migrations
             modelBuilder.Entity("OnlineVotingSystemAPI.Models.Role", b =>
                 {
                     b.Navigation("AdminRoles");
-                });
-
-            modelBuilder.Entity("OnlineVotingSystemAPI.Models.VotingEvent", b =>
-                {
-                    b.Navigation("Candidates");
                 });
 #pragma warning restore 612, 618
         }

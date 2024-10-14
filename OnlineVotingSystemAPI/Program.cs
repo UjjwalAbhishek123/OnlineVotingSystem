@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.IdentityModel.Tokens;
 using OnlineVotingSystemAPI.Data;
+using OnlineVotingSystemAPI.Repositories.Impementations;
 using OnlineVotingSystemAPI.Repositories.Implementations;
 using OnlineVotingSystemAPI.Repositories.Interfaces;
 using OnlineVotingSystemAPI.Services.Implementations;
@@ -19,6 +21,8 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 //adding ApplicationDbContext to Ioc Container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -53,6 +57,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure Role-based Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+});
 
 var app = builder.Build();
 

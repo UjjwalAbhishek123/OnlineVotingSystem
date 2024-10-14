@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineVotingSystemAPI.Data;
+using OnlineVotingSystemAPI.DTOs;
 using OnlineVotingSystemAPI.Models;
 using OnlineVotingSystemAPI.Repositories.Interfaces;
 
@@ -110,6 +111,27 @@ namespace OnlineVotingSystemAPI.Repositories.Impementations
             }
 
             return user;
+        }
+
+        public async Task<List<CandidateDTO>> GetAllCandidateAsync()
+        {
+            var candidates = await _dbContext.Candidates.ToListAsync();
+
+            // Check if candidates list is null
+            if (candidates == null || candidates.Count == 0)
+            {
+                throw new Exception("Candidates not found in the database.");
+            }
+
+            // Map Candidate to CandidateDTO
+            var candidateDTOs = candidates.Select(c => new CandidateDTO
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Party = c.Party
+            }).ToList();
+
+            return candidateDTOs;
         }
     }
 }
